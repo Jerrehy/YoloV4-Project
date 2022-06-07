@@ -64,7 +64,7 @@ if uploaded_file is not None:
 
     if process_button and vf:
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-        result = cv.VideoWriter(f'detect-result-{now}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 10, size)
+        result = cv.VideoWriter(f'detections/detect-result-{now}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 10, size)
 
         # Просмотр FPS в секунду
         starting_time = time.time()
