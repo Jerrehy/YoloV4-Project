@@ -66,11 +66,18 @@ if uploaded_file is not None:
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
         result = cv.VideoWriter(f'detections/detect-result-{now}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 10, size)
 
+        # Данные для виртуальной карты
+        # result_map = cv.VideoWriter(f'detections/map-detect-result-{now}.mp4',
+        # cv.VideoWriter_fourcc(*'mp4v'), 10, size)
+
         # Просмотр FPS в секунду
         starting_time = time.time()
         frame_counter = 0
 
         while True:
+            # Карта для записи
+            map = cv.imread("map_draw.png")
+
             # Считывание по кадрам
             ret, frame = vf.read()
             frame_counter += 1
@@ -101,25 +108,41 @@ if uploaded_file is not None:
                 if classid[0] in [2, 3, 5, 7]:
                     label = "%s : %f" % (class_name[classid[0]], score)
                     cv.rectangle(frame, box, color, 1)
+
+                    # Координаты для центра объекта для виртуальной карты
+                    # x_center = box[0] + int(box[2] * 0.5)
+                    # y_center = box[1] + int(box[3] * 0.5)
+
+                    # cv.circle(map, (x_center, y_center), 5, color, -1)
+
+                    # cv.putText(map, label, (box[0], box[1] - 10),
+                    # cv.FONT_HERSHEY_COMPLEX, 0.3, color, 1)
+
                     cv.putText(frame, label, (box[0], box[1] - 10),
                                cv.FONT_HERSHEY_COMPLEX, 0.3, color, 1)
+
                 else:
                     continue
+
+            # Запись на виртуальную карту
+            # result_map.write(map)
+
+            info_color = (9, 5, 252)
 
             endingTime = time.time() - starting_time
             fps = frame_counter / endingTime
 
             cv.putText(frame, f'FPS: {fps}', (20, 50),
-                       cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 255, 0), 2)
+                       cv.FONT_HERSHEY_COMPLEX, 0.7, info_color, 2)
 
             cv.putText(frame, f'total count: {total_count}', (20, 70),
-                       cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 255, 0), 2)
+                       cv.FONT_HERSHEY_COMPLEX, 0.7, info_color, 2)
 
             y = 90
 
             for key in counts:
                 cv.putText(frame, f'count {key}: {counts[key]}', (20, y),
-                           cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 255, 0), 2)
+                           cv.FONT_HERSHEY_COMPLEX, 0.7, info_color, 2)
                 y += 20
 
             frame = cv.cvtColor(frame, cv.COLOR_RGB2BGR)
